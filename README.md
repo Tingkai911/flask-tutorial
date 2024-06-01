@@ -5,3 +5,5 @@ Multi threading tutorial: https://www.youtube.com/watch?v=3dEPY3HiPtI
 Multi processing tutorial: https://www.youtube.com/watch?v=YOhrIov7PZA 
 
 REST API tutorial: https://realpython.com/api-integration-in-python/ 
+
+OpenTelemetry in Flask tutorial: https://opentelemetry.io/docs/languages/python/getting-started/
