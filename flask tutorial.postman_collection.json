@@ -50,6 +50,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Roll Dice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/rolldice?player=John",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"rolldice"
+					],
+					"query": [
+						{
+							"key": "player",
+							"value": "John"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
