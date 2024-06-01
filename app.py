@@ -1,8 +1,18 @@
 import json
+import logging
 from datetime import datetime
+from random import randint
 
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from opentelemetry import trace, metrics
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.urllib import URLLibInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+
+# Hardcode for now
+__name__ = "diceroller"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -93,6 +103,56 @@ def tasks():
             mimetype='application/json'
         )
         return response
+
+
+# Otel tutorial:
+# https://opentelemetry.io/docs/languages/python/getting-started/
+# https://scoutapm.com/blog/configuring-opentelemetry-python
+
+# Set OpenTelemetry Resource Attributes
+resource = Resource(attributes={
+    "service.name": __name__
+})
+
+# Configure OpenTelemetry Tracer and Exporter
+trace.set_tracer_provider(TracerProvider(resource=resource))
+
+# Acquire a tracer
+tracer = trace.get_tracer("diceroller.tracer")
+
+# Acquire a meter.
+meter = metrics.get_meter("diceroller.meter")
+# Now create a counter instrument to make measurements with
+roll_counter = meter.create_counter(
+    "dice.rolls",
+    description="The number of rolls by roll value",
+)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Apply OpenTelemetry Instrumentation
+FlaskInstrumentor().instrument_app(app)
+URLLibInstrumentor().instrument()
+
+@app.route("/rolldice")
+def roll_dice():
+    # This creates a new span that's the child of the current one
+    with tracer.start_as_current_span("roll") as roll_span:
+        player = request.args.get('player', default=None, type=str)
+        result = str(roll())
+        roll_span.set_attribute("roll.value", result)
+        # This adds 1 to the counter for the given roll value
+        roll_counter.add(1, {"roll.value": result})
+        if player:
+            logger.warning("%s is rolling the dice: %s", player, result)
+        else:
+            logger.warning("Anonymous player is rolling the dice: %s", result)
+        return result
+
+
+def roll():
+    return randint(1, 6)
 
 
 if __name__ == "__main__":
