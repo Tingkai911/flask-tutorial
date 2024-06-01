@@ -1,0 +1,36 @@
+version: "3"
+services:
+  # Flask App
+  app:
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    depends_on:
+      - jaeger-all-in-one
+      - otel-collector
+  # Jaeger
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686" # Jaeger UI
+      - "14268"       # Receive spans over gRPC
+      - "14250"       # Receive spans over HTTP
+  # Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    volumes:
+      - ./otel/otel-collector-config.yml:/etc/otel-collector-config.yml
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    ports:
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # gRPC receiver
+      - "4318:4318"   # HTTP receiver
+      - "55670:55679" # zpages extension
+    depends_on:
+      - jaeger-all-in-one

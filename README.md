@@ -21,7 +21,7 @@ opentelemetry-instrument \
     flask run 
 ```
 
-Run this command to start the otel collector in docker
+Run this command to start the OpenTelemetry collector in docker
 ```shell
 docker run --name flask-otel-collector -d -p 4317:4317 \
     -v ./otel/otel-collector-config.yml:/etc/otel-collector-config.yml \
@@ -33,4 +33,16 @@ Run the application, but don't export to console
 ```shell
 export OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
 opentelemetry-instrument --logs_exporter otlp flask run
+```
+
+Send traces from otel collector to Jaeger: 
+- https://www.aspecto.io/blog/opentelemetry-collector-guide/
+- https://www.youtube.com/watch?v=ThCoFDA9XuI
+- https://middlewaretechnologies.in/2023/12/how-to-send-opentelemetry-data-to-otlp-collector-and-jaeger-tracing.html
+
+Jaeger UI URL: localhost:16686
+
+Run docker-compose
+```shell
+docker-compose up -d
 ```

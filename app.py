@@ -11,8 +11,6 @@ from opentelemetry.instrumentation.urllib import URLLibInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 
-# Hardcode for now
-__name__ = "diceroller"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -134,6 +132,7 @@ logger = logging.getLogger(__name__)
 # Apply OpenTelemetry Instrumentation
 FlaskInstrumentor().instrument_app(app)
 URLLibInstrumentor().instrument()
+
 
 @app.route("/rolldice")
 def roll_dice():
