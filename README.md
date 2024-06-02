@@ -9,6 +9,7 @@ REST API tutorial: https://realpython.com/api-integration-in-python/
 OpenTelemetry in Flask tutorial: 
 - https://opentelemetry.io/docs/languages/python/getting-started/
 - https://scoutapm.com/blog/configuring-opentelemetry-python
+- https://www.youtube.com/watch?v=9eT3J-HOZA8
 
 Run this command in terminal to see spans printed in console
 ```shell
@@ -43,6 +44,8 @@ Send traces from otel collector to Jaeger:
 Jaeger UI URL: localhost:16686
 
 Run docker-compose
+- Make sure docker desktop is already started before doing this
+
 ```shell
 docker-compose up -d
 ```
