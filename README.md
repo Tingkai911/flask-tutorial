@@ -6,6 +6,8 @@ Multi processing tutorial: https://www.youtube.com/watch?v=YOhrIov7PZA
 
 REST API tutorial: https://realpython.com/api-integration-in-python/ 
 
+Flask API URL: localhost:5000
+
 OpenTelemetry in Flask tutorial: 
 - https://opentelemetry.io/docs/languages/python/getting-started/
 - https://scoutapm.com/blog/configuring-opentelemetry-python
@@ -49,3 +51,10 @@ Run docker-compose
 ```shell
 docker-compose up -d
 ```
+
+Prometheus Tutorial:
+- https://www.youtube.com/watch?v=GAi_3Bgwa64
+
+Prometheus UI URL: localhost:9090
+
+Search for the metric flask_tutorial_dice_rolls_total. Should see the total number of times each number is rolled.

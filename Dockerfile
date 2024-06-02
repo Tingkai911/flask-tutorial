@@ -13,4 +13,4 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=development
 
-CMD ["opentelemetry-instrument", "--logs_exporter", "otlp", "--service_name", "flask-tutorial", "flask", "run", "--host=0.0.0.0"]
+CMD ["opentelemetry-instrument", "--logs_exporter", "otlp", "--service_name", "flask_tutorial", "flask", "run", "--host=0.0.0.0"]

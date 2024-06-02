@@ -14,10 +14,15 @@ exporters:
     endpoint: "http://jaeger-all-in-one:4317"
     tls:
       insecure: true
-
+  prometheus:
+    endpoint: "0.0.0.0:9464"
+    namespace: flask_tutorial
 processors:
   batch:
 service:
+  telemetry:
+    logs:
+      level: debug
   pipelines:
     traces:
       receivers: [otlp]
@@ -25,7 +30,7 @@ service:
       processors: [batch]
     metrics:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [debug, prometheus]
       processors: [batch]
     logs:
       receivers: [otlp]
