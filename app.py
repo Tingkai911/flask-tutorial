@@ -69,6 +69,7 @@ class Todo(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     with tracer.start_as_current_span("index") as span:
+        logger.info("index %s", hex(span.get_span_context().trace_id))  # Get the trace id and convert to hex
         if request.method == 'POST':
             task_content = request.form['content']
             new_task = Todo(content=task_content)
@@ -89,6 +90,7 @@ def index():
 @app.route('/delete/<int:id>')
 def delete(id):
     with tracer.start_as_current_span("delete") as span:
+        logger.info("delete %s", hex(span.get_span_context().trace_id))
         task_to_delete = Todo.query.get_or_404(id)
         span.set_attribute("tasks.id", task_to_delete.id)
         try:
@@ -102,6 +104,7 @@ def delete(id):
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     with tracer.start_as_current_span("update") as span:
+        logger.info("update %s", hex(span.get_span_context().trace_id))
         task = Todo.query.get_or_404(id)
         span.set_attribute("tasks.id", task.id)
         if request.method == 'POST':
@@ -120,6 +123,7 @@ def update(id):
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
     with tracer.start_as_current_span("tasks") as span:
+        logger.info("tasks %s", hex(span.get_span_context().trace_id))
         if request.method == 'POST':
             task_id = request.get_json().get('id')
             task = Todo.query.get(task_id)
@@ -143,10 +147,11 @@ def tasks():
 @app.route("/rolldice")
 def roll_dice():
     # This creates a new span that's the child of the current one
-    with tracer.start_as_current_span("roll_dice") as roll_span:
+    with tracer.start_as_current_span("roll_dice") as span:
+        logger.info("roll_dice %s", hex(span.get_span_context().trace_id))
         player = request.args.get('player', default=None, type=str)
         result = str(roll())
-        roll_span.set_attribute("roll.value", result)
+        span.set_attribute("roll.value", result)
         # This adds 1 to the counter for the given roll value
         roll_counter.add(1, {"roll.value": result})
         if player:
@@ -157,8 +162,9 @@ def roll_dice():
 
 
 def roll():
-    with tracer.start_as_current_span("roll") as roll_span:
-        roll_span.set_attribute("roll.value", "Rolling the Dice")
+    with tracer.start_as_current_span("roll") as span:
+        logger.info("roll %s", hex(span.get_span_context().trace_id))
+        span.set_attribute("roll.value", "Rolling the Dice")
         return randint(1, 6)
 
 
