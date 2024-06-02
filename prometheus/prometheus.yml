@@ -1,5 +1,6 @@
 global:
   scrape_interval: 5s
+# Tells prometheus to scrape metric data from otel-collector
 scrape_configs:
   - job_name: 'otel-collector'
     static_configs:
